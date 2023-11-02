@@ -1,8 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises'
 
-export default async function fixResumeJson(path: string): Promise<CustomResponse | undefined> {
+export default async function fixResumeJson(filename: string): Promise<CustomResponse | undefined> {
   try {
-    const response = await readFile('./annotations/' + path, { encoding: 'utf8' })
+    const response = await readFile('./annotations/' + filename, { encoding: 'utf8' })
     const json = JSON.parse(response)
 
     // iterate through whole forms list
@@ -114,9 +114,9 @@ export default async function fixResumeJson(path: string): Promise<CustomRespons
       i++
     }
 
-    await writeFile('./annotations-fixed/' + path, JSON.stringify(json))
+    await writeFile('./annotations-fixed/' + filename, JSON.stringify(json))
 
-    return <CustomResponse>{ status: 201, message: `Fixing of ${path} was successful! Check the 'annotations-fixed' folder!` }
+    return <CustomResponse>{ status: 201, message: `Fixing of ${filename} was successful! Check the 'annotations-fixed' folder!` }
   } catch (error) {
     return undefined
   }

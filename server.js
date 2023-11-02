@@ -35,7 +35,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const write_json_1 = __importDefault(require("./write_json"));
 const http_1 = __importDefault(require("http"));
 const k = __importStar(require("./constants"));
 const get_filenames_1 = __importDefault(require("./get_filenames"));
@@ -59,20 +58,6 @@ function handlePost(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         let response = {};
         switch (req.url) {
-            case '/write': {
-                let body = '';
-                req.on('data', chunk => {
-                    body += chunk.toString();
-                });
-                req.on('end', () => __awaiter(this, void 0, void 0, function* () {
-                    const result = yield (0, write_json_1.default)('example.json', body);
-                    if (result) {
-                        response = { status: result.status, message: 'Data written successfully!' };
-                    }
-                    handleResponse(response, res);
-                }));
-                break;
-            }
             case '/fix-resume-json': {
                 let body = '';
                 req.on('data', chunk => {
@@ -81,7 +66,7 @@ function handlePost(req, res) {
                 req.on('end', () => __awaiter(this, void 0, void 0, function* () {
                     try {
                         const requestBody = JSON.parse(body);
-                        const result = yield (0, fix_resume_json_1.default)(requestBody.path);
+                        const result = yield (0, fix_resume_json_1.default)(requestBody.filename);
                         if (result)
                             response = result;
                         handleResponse(response, res);

@@ -1,4 +1,3 @@
-import writeJson from './write_json'
 import http from 'http'
 import * as k from './constants'
 import getFilenames from './get_filenames'
@@ -24,25 +23,6 @@ async function handlePost(req: http.IncomingMessage, res: http.ServerResponse) {
   let response: CustomResponse = {}
 
   switch (req.url) {
-    case '/write': {
-      let body = ''
-
-      req.on('data', chunk => {
-        body += chunk.toString()
-      })
-
-      req.on('end', async () => {
-        const result: CustomResponse | undefined = await writeJson('example.json', body)
-
-        if (result) {
-          response = { status: result.status, message: 'Data written successfully!' }
-        }
-
-        handleResponse(response, res)
-      })
-
-      break
-    }
     case '/fix-resume-json': {
       let body = ''
 
@@ -53,7 +33,7 @@ async function handlePost(req: http.IncomingMessage, res: http.ServerResponse) {
       req.on('end', async () => {
         try {
           const requestBody = JSON.parse(body)
-          const result: CustomResponse | undefined = await fixResumeJson(requestBody.path)
+          const result: CustomResponse | undefined = await fixResumeJson(requestBody.filename)
           if (result) response = result
           handleResponse(response, res)
         } catch (error) {

@@ -10,10 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const promises_1 = require("node:fs/promises");
-function fixResumeJson(path) {
+function fixResumeJson(filename) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield (0, promises_1.readFile)('./annotations/' + path, { encoding: 'utf8' });
+            const response = yield (0, promises_1.readFile)('./annotations/' + filename, { encoding: 'utf8' });
             const json = JSON.parse(response);
             // iterate through whole forms list
             let i = 0;
@@ -106,8 +106,8 @@ function fixResumeJson(path) {
                 }
                 i++;
             }
-            yield (0, promises_1.writeFile)('./annotations-fixed/' + path, JSON.stringify(json));
-            return { status: 201, message: `Fixing of ${path} was successful! Check the 'annotations-fixed' folder!` };
+            yield (0, promises_1.writeFile)('./annotations-fixed/' + filename, JSON.stringify(json));
+            return { status: 201, message: `Fixing of ${filename} was successful! Check the 'annotations-fixed' folder!` };
         }
         catch (error) {
             return undefined;
