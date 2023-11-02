@@ -82,14 +82,13 @@ function handleGet(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         let response = {};
         switch (req.url) {
-            case '/get-filenames':
-                req.on('end', () => __awaiter(this, void 0, void 0, function* () {
-                    const result = yield (0, get_filenames_1.default)();
-                    if (result)
-                        response = result;
-                    handleResponse(response, res);
-                }));
+            case '/get-filenames': {
+                const result = yield (0, get_filenames_1.default)();
+                if (result)
+                    response = result;
+                handleResponse(response, res);
                 break;
+            }
             default:
                 response = { status: 404 };
                 handleResponse(response, res);

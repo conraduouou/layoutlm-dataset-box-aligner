@@ -19,7 +19,7 @@ function handleResponse(response: CustomResponse, res: http.ServerResponse) {
   }
 }
 
-async function handlePost(req: http.IncomingMessage, res: http.ServerResponse) {  
+async function handlePost(req: http.IncomingMessage, res: http.ServerResponse) {
   let response: CustomResponse = {}
 
   switch (req.url) {
@@ -52,15 +52,12 @@ async function handleGet(req: http.IncomingMessage, res: http.ServerResponse) {
   let response: CustomResponse = {}
 
   switch (req.url) {
-    case '/get-filenames':
-      req.on('end', async () => {
-        const result = await getFilenames()
-        if (result) response = result
-
-        handleResponse(response, res)
-      })
-
+    case '/get-filenames': {
+      const result = await getFilenames()
+      if (result) response = result
+      handleResponse(response, res)
       break
+    }
     default:
       response = { status: 404 }
       handleResponse(response, res)

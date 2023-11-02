@@ -16,12 +16,17 @@ const fs_1 = __importDefault(require("fs"));
 function getFilenames() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const files = yield fs_1.default.promises.readdir('/annotations');
-            const fileNames = files.filter(file => fs_1.default.statSync(file).isFile());
-            const response = { status: 200, body: fileNames };
+            const files = yield fs_1.default.promises.readdir('./annotations');
+            const fileNames = files.filter(file => fs_1.default.statSync('./annotations/' + file).isFile());
+            const body = {
+                length: fileNames.length,
+                filenames: fileNames
+            };
+            const response = { status: 200, body: body };
             return response;
         }
         catch (error) {
+            console.log(error);
             return undefined;
         }
     });
