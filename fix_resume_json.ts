@@ -51,7 +51,6 @@ export default async function fixResumeJson(path: string): Promise<CustomRespons
 
     return <CustomResponse>{ status: 201, message: `Fixing of ${path} was successful! Check the 'annotations-fixed' folder!` }
   } catch (error) {
-    console.log(error)
     return undefined
   }
 }

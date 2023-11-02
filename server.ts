@@ -51,16 +51,27 @@ async function handlePost(req: http.IncomingMessage, res: http.ServerResponse) {
       })
 
       req.on('end', async () => {
-        const requestBody = JSON.parse(body)
-
-        if (requestBody.path) {
+        try {
+          const requestBody = JSON.parse(body)
           const result: CustomResponse | undefined = await fixResumeJson(requestBody.path)
           if (result) response = result
           handleResponse(response, res)
-        } else {
+        } catch (error) {
+
+          const filenamesResult = await getFilenames()
+
+          if (!filenamesResult) handleResponse(response, res)
+
+          const filenames = filenamesResult!.body.filenames
+
+          for (const name of filenames) {
+            await fixResumeJson(name)
+          }
+
+          response = { status: 201, message: `Fixing of resume jsons was successful! Check the 'annotations-fixed' folder!` }
+
           handleResponse(response, res)
         }
-
       })
       break
     }

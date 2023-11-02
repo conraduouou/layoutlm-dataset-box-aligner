@@ -54,7 +54,6 @@ function fixResumeJson(path) {
             return { status: 201, message: `Fixing of ${path} was successful! Check the 'annotations-fixed' folder!` };
         }
         catch (error) {
-            console.log(error);
             return undefined;
         }
     });

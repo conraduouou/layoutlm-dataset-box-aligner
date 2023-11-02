@@ -26,7 +26,6 @@ function getFilenames() {
             return response;
         }
         catch (error) {
-            console.log(error);
             return undefined;
         }
     });

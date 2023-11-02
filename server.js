@@ -79,14 +79,22 @@ function handlePost(req, res) {
                     body += chunk.toString();
                 });
                 req.on('end', () => __awaiter(this, void 0, void 0, function* () {
-                    const requestBody = JSON.parse(body);
-                    if (requestBody.path) {
+                    try {
+                        const requestBody = JSON.parse(body);
                         const result = yield (0, fix_resume_json_1.default)(requestBody.path);
                         if (result)
                             response = result;
                         handleResponse(response, res);
                     }
-                    else {
+                    catch (error) {
+                        const filenamesResult = yield (0, get_filenames_1.default)();
+                        if (!filenamesResult)
+                            handleResponse(response, res);
+                        const filenames = filenamesResult.body.filenames;
+                        for (const name of filenames) {
+                            yield (0, fix_resume_json_1.default)(name);
+                        }
+                        response = { status: 201, message: `Fixing of resume jsons was successful! Check the 'annotations-fixed' folder!` };
                         handleResponse(response, res);
                     }
                 }));
