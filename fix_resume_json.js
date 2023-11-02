@@ -96,6 +96,8 @@ function fixResumeJson(filename) {
                         before = 0;
                         matchWasChanged = true;
                     }
+                    if (i >= json.form.length)
+                        break;
                     // this is to prevent skipping over the 0th entry
                     if (matchWasChanged) {
                         matchWasChanged = false;

@@ -103,6 +103,8 @@ export default async function fixResumeJson(filename: string): Promise<CustomRes
           matchWasChanged = true
         }
 
+        if (i >= json.form.length) break
+
         // this is to prevent skipping over the 0th entry
         if (matchWasChanged) {
           matchWasChanged = false
