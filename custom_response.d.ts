@@ -1,4 +1,5 @@
 interface CustomResponse {
   status?: number,
-  message?: string
+  message?: string,
+  body?: object
 }

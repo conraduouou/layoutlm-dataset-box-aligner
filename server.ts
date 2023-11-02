@@ -3,7 +3,23 @@ import http from 'http'
 import * as k from './constants'
 import getFilenames from './get_filenames'
 
-async function handlePost(req: http.IncomingMessage, res: http.ServerResponse) {
+function handleResponse(response: CustomResponse, res: http.ServerResponse) {
+  res.writeHead(response.status ?? 404, k.DEFAULT_MESSAGE_HEADERS)
+
+  switch (response.status) {
+    case 500:
+      res.end(JSON.stringify(response ?? k.DEFAULT_ERROR_MESSAGE))
+      break
+    case 200:
+    case 201:
+      res.end(JSON.stringify(response ?? k.DEFAULT_SUCCESS_MESSAGE))
+      break
+    default:
+      res.end(JSON.stringify(k.DEFAULT_NOT_FOUND_MESSAGE))
+  }
+}
+
+async function handlePost(req: http.IncomingMessage, res: http.ServerResponse) {  
   let response: CustomResponse = {}
 
   switch (req.url) {
@@ -15,30 +31,20 @@ async function handlePost(req: http.IncomingMessage, res: http.ServerResponse) {
       })
 
       req.on('end', async () => {
-        const result = await writeJson('example.json', body)
+        const result: CustomResponse | undefined = await writeJson('example.json', body)
 
         if (result) {
-          response = { status: 201, message: 'Data written successfully!' }
+          response = { status: result.status, message: 'Data written successfully!' }
         }
+
+        handleResponse(response, res)
       })
 
       break
     }
     default:
       response = { status: 404 }
-  }
-
-  res.writeHead(response.status ?? 404, k.DEFAULT_MESSAGE_HEADERS)
-
-  switch (response.status) {
-    case 500:
-      res.end(response.message ?? k.DEFAULT_ERROR_MESSAGE)
-      break
-    case 201:
-      res.end(response.message ?? k.DEFAULT_SUCCESS_MESSAGE)
-      break
-    default:
-      res.end(k.DEFAULT_NOT_FOUND_MESSAGE)
+      handleResponse(response, res)
   }
 }
 
@@ -46,29 +52,18 @@ async function handleGet(req: http.IncomingMessage, res: http.ServerResponse) {
   let response: CustomResponse = {}
 
   switch (req.url) {
-    case '/get-filenames': {
+    case '/get-filenames':
       req.on('end', async () => {
         const result = await getFilenames()
         if (result) response = result
+
+        handleResponse(response, res)
       })
 
       break
-    }
     default:
       response = { status: 404 }
-  }
-
-  res.writeHead(response.status ?? 404, k.DEFAULT_MESSAGE_HEADERS)
-
-  switch (response.status) {
-    case 500:
-      res.end(response.message ?? k.DEFAULT_ERROR_MESSAGE)
-      break
-    case 200:
-      res.end(response.message ?? k.DEFAULT_SUCCESS_MESSAGE)
-      break
-    default:
-      res.end(k.DEFAULT_NOT_FOUND_MESSAGE)
+      handleResponse(response, res)
   }
 }
 

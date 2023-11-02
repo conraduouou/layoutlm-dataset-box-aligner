@@ -1,7 +1,7 @@
-export const DEFAULT_MESSAGE_HEADERS = { 'Content-Type': 'text/plain' }
-export const DEFAULT_ERROR_MESSAGE = 'Internal Server Error'
-export const DEFAULT_NOT_FOUND_MESSAGE = 'Not Found'
-export const DEFAULT_SUCCESS_MESSAGE = 'Success!'
+export const DEFAULT_MESSAGE_HEADERS = { 'Content-Type': 'application/json' }
+export const DEFAULT_ERROR_MESSAGE = { status: 500, message: 'Internal Server Error' }
+export const DEFAULT_NOT_FOUND_MESSAGE = { status: 404, message: 'Not Found' }
+export const DEFAULT_SUCCESS_MESSAGE = { status: 200, message: 'Success!' }
 
 export const PORT = process.env.PORT || 3000
 

@@ -13,18 +13,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(require("fs"));
-function writeJson(location, data) {
+function getFilenames() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const json = JSON.parse(data);
-            const stringJson = JSON.stringify(json);
-            // perform write
-            yield fs_1.default.promises.writeFile(location, stringJson);
-            return { status: 201 };
+            const files = yield fs_1.default.promises.readdir('/annotations');
+            const fileNames = files.filter(file => fs_1.default.statSync(file).isFile());
+            const response = { status: 200, body: fileNames };
+            return response;
         }
         catch (error) {
             return undefined;
         }
     });
 }
-exports.default = writeJson;
+exports.default = getFilenames;
