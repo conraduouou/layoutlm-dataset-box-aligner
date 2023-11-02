@@ -39,6 +39,7 @@ const write_json_1 = __importDefault(require("./write_json"));
 const http_1 = __importDefault(require("http"));
 const k = __importStar(require("./constants"));
 const get_filenames_1 = __importDefault(require("./get_filenames"));
+const fix_resume_json_1 = __importDefault(require("./fix_resume_json"));
 function handleResponse(response, res) {
     var _a;
     res.writeHead((_a = response.status) !== null && _a !== void 0 ? _a : 404, k.DEFAULT_MESSAGE_HEADERS);
@@ -72,6 +73,25 @@ function handlePost(req, res) {
                 }));
                 break;
             }
+            case '/fix-resume-json': {
+                let body = '';
+                req.on('data', chunk => {
+                    body += chunk.toString();
+                });
+                req.on('end', () => __awaiter(this, void 0, void 0, function* () {
+                    const requestBody = JSON.parse(body);
+                    if (requestBody.path) {
+                        const result = yield (0, fix_resume_json_1.default)(requestBody.path);
+                        if (result)
+                            response = result;
+                        handleResponse(response, res);
+                    }
+                    else {
+                        handleResponse(response, res);
+                    }
+                }));
+                break;
+            }
             default:
                 response = { status: 404 };
                 handleResponse(response, res);
@@ -82,7 +102,7 @@ function handleGet(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         let response = {};
         switch (req.url) {
-            case '/get-filenames': {
+            case '/filenames': {
                 const result = yield (0, get_filenames_1.default)();
                 if (result)
                     response = result;
