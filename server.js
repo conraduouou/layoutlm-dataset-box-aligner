@@ -39,6 +39,7 @@ const http_1 = __importDefault(require("http"));
 const k = __importStar(require("./constants"));
 const get_filenames_1 = __importDefault(require("./get_filenames"));
 const fix_resume_json_1 = __importDefault(require("./fix_resume_json"));
+const fix_resume_label_json_1 = __importDefault(require("./fix_resume_label_json"));
 function handleResponse(response, res) {
     var _a;
     res.writeHead((_a = response.status) !== null && _a !== void 0 ? _a : 404, k.DEFAULT_MESSAGE_HEADERS);
@@ -57,6 +58,7 @@ function handleResponse(response, res) {
 function handlePost(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         let response = {};
+        console.log(req.url);
         switch (req.url) {
             case '/fix-resume-json': {
                 let body = '';
@@ -80,6 +82,34 @@ function handlePost(req, res) {
                             yield (0, fix_resume_json_1.default)(name);
                         }
                         response = { status: 201, message: `Fixing of resume jsons was successful! Check the 'annotations-fixed' folder!` };
+                        handleResponse(response, res);
+                    }
+                }));
+                break;
+            }
+            case '/fix-resume-label-json': {
+                let body = '';
+                req.on('data', chunk => {
+                    body += chunk.toString();
+                });
+                req.on('end', () => __awaiter(this, void 0, void 0, function* () {
+                    try {
+                        const requestBody = JSON.parse(body);
+                        const result = yield (0, fix_resume_label_json_1.default)(requestBody.filename);
+                        console.log(result);
+                        if (result)
+                            response = result;
+                        handleResponse(response, res);
+                    }
+                    catch (error) {
+                        const filenamesResult = yield (0, get_filenames_1.default)();
+                        if (!filenamesResult)
+                            handleResponse(response, res);
+                        const filenames = filenamesResult.body.filenames;
+                        for (const name of filenames) {
+                            yield (0, fix_resume_label_json_1.default)(name);
+                        }
+                        response = { status: 201, message: `Fixing of resume jsons' labels was successful! Check the 'annotations-fixed' folder!` };
                         handleResponse(response, res);
                     }
                 }));
