@@ -116,6 +116,10 @@ export default async function fixResumeJson(filename: string): Promise<CustomRes
       i++
     }
 
+    for (const entry of json.form) {
+      entry.label = 'other'
+    }
+
     await writeFile('./annotations-fixed/' + filename, JSON.stringify(json))
 
     return <CustomResponse>{ status: 201, message: `Fixing of ${filename} was successful! Check the 'annotations-fixed' folder!` }

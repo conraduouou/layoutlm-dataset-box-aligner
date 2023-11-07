@@ -108,6 +108,9 @@ function fixResumeJson(filename) {
                 }
                 i++;
             }
+            for (const entry of json.form) {
+                entry.label = 'other';
+            }
             yield (0, promises_1.writeFile)('./annotations-fixed/' + filename, JSON.stringify(json));
             return { status: 201, message: `Fixing of ${filename} was successful! Check the 'annotations-fixed' folder!` };
         }
