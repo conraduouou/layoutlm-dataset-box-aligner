@@ -3,6 +3,7 @@ import * as k from './constants'
 import getFilenames from './get_filenames'
 import fixResumeJson from './fix_resume_json'
 import fixResumeLabelJson from './fix_resume_label_json'
+import fixIdJson from './fix_id_json'
 
 function handleResponse(response: CustomResponse, res: http.ServerResponse) {
   res.writeHead(response.status ?? 404, k.DEFAULT_MESSAGE_HEADERS)
@@ -23,17 +24,15 @@ function handleResponse(response: CustomResponse, res: http.ServerResponse) {
 async function handlePost(req: http.IncomingMessage, res: http.ServerResponse) {
   let response: CustomResponse = {}
 
-  console.log(req.url)
+  let body = ''
 
-  switch (req.url) {
-    case '/fix-resume-json': {
-      let body = ''
+  req.on('data', chunk => {
+    body += chunk.toString()
+  })
 
-      req.on('data', chunk => {
-        body += chunk.toString()
-      })
-
-      req.on('end', async () => {
+  req.on('end', async () => {
+    switch (req.url) {
+      case '/fix-resume-json':
         try {
           const requestBody = JSON.parse(body)
           const result: CustomResponse | undefined = await fixResumeJson(requestBody.filename)
@@ -41,31 +40,21 @@ async function handlePost(req: http.IncomingMessage, res: http.ServerResponse) {
           handleResponse(response, res)
         } catch (error) {
           const filenamesResult = await getFilenames()
-
           if (!filenamesResult) handleResponse(response, res)
-
           const filenames = filenamesResult!.body.filenames
-
+  
           for (const name of filenames) {
             await fixResumeJson(name)
           }
-
+  
           response = { status: 201, message: `Fixing of resume jsons was successful! Check the 'annotations-fixed' folder!` }
-
+  
           handleResponse(response, res)
         }
-      })
-      break
-    }
-
-    case '/fix-resume-label-json': {
-      let body = ''
-
-      req.on('data', chunk => {
-        body += chunk.toString()
-      })
-
-      req.on('end', async () => {
+  
+        break
+  
+      case '/fix-resume-label-json':
         try {
           const requestBody = JSON.parse(body)
           const result: CustomResponse | undefined = await fixResumeLabelJson(requestBody.filename)
@@ -73,29 +62,48 @@ async function handlePost(req: http.IncomingMessage, res: http.ServerResponse) {
           if (result) response = result
           handleResponse(response, res)
         } catch (error) {
-
           const filenamesResult = await getFilenames()
-
           if (!filenamesResult) handleResponse(response, res)
-
           const filenames = filenamesResult!.body.filenames
-
+  
           for (const name of filenames) {
             await fixResumeLabelJson(name)
           }
-
+  
           response = { status: 201, message: `Fixing of resume jsons' labels was successful! Check the 'annotations-fixed' folder!` }
-
+  
           handleResponse(response, res)
         }
-      })
-      break
-    }
 
-    default:
-      response = { status: 404 }
-      handleResponse(response, res)
-  }
+        break
+  
+      case '/fix-id-json':
+        try {
+          const requestBody = JSON.parse(body)
+          const result: CustomResponse | undefined = await fixIdJson(requestBody.filename)
+          console.log(result)
+          if (result) response = result
+          handleResponse(response, res)
+        } catch (error) {
+          const filenamesResult = await getFilenames()
+          if (!filenamesResult) handleResponse(response, res)
+          const filenames = filenamesResult!.body.filenames
+  
+          for (const name of filenames) {
+            await fixIdJson(name)
+          }
+  
+          response = { status: 201, message: `Fixing of resume jsons' IDs was successful! Check the 'annotations-fixed' folder!` }
+  
+          handleResponse(response, res)
+        }
+        break
+  
+      default:
+        response = { status: 404 }
+        handleResponse(response, res)
+    }
+  })
 }
 
 async function handleGet(req: http.IncomingMessage, res: http.ServerResponse) {
