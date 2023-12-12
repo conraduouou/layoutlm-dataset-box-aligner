@@ -6,7 +6,7 @@ export default async function fixIdJson(filename: string): Promise<CustomRespons
     const json = JSON.parse(response)
 
     for (let i = 0; i < json.form.length; i++) {
-      json.form[0].id = 0
+      json.form[i].id = i
     }
 
     await writeFile('./annotations-fixed/' + filename, JSON.stringify(json))

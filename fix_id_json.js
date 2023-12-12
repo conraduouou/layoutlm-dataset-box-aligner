@@ -16,7 +16,7 @@ function fixIdJson(filename) {
             const response = yield (0, promises_1.readFile)('./annotations/' + filename, { encoding: 'utf8' });
             const json = JSON.parse(response);
             for (let i = 0; i < json.form.length; i++) {
-                json.form[0].id = 0;
+                json.form[i].id = i;
             }
             yield (0, promises_1.writeFile)('./annotations-fixed/' + filename, JSON.stringify(json));
             return { status: 201, message: `Fixing of ${filename}'s IDs was successful! Check the 'annotations-fixed' folder!` };
