@@ -19,6 +19,11 @@ An important disclaimer:
 
 ## Guide
 
+To run the server, just run the default command of Node for starting a server:
+```
+npm run start
+```
+
 There must be two directories present in the project folder: `annotations` and `annotations-fixed`. The `annotations` directory contains the JSON files that themselves consist of the dataset, either for training or for testing. The `annotations-fixed` will contain the shrunk files replicated from the `annotations` directory.
 
 The only endpoint that actually serves a purpose in this project is the **POST** *Fix resume JSON* endpoint. Usually, that would suffice for anyone's use-case, but in case one wants to see what this project does, one can supply the following request body:
